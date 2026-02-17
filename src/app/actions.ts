@@ -266,7 +266,7 @@ export async function createTrip(formData: FormData) {
   if (session?.role !== 'SUPER_ADMIN' && session?.role_id) {
     const { getRolePermissions } = await import('@/lib/rbac-server');
     const permissions = await getRolePermissions(session.role_id);
-    if (!permissions['trips']?.edit) {
+    if (!permissions['trips']?.edit && !permissions['dashboard']?.edit) {
       throw new Error('Unauthorized. You do not have permission to create trips.');
     }
   }
@@ -320,7 +320,7 @@ export async function updateTrip(id: number, formData: FormData) {
   if (session?.role !== 'SUPER_ADMIN' && session?.role_id) {
     const { getRolePermissions } = await import('@/lib/rbac-server');
     const permissions = await getRolePermissions(session.role_id);
-    if (!permissions['trips']?.edit) {
+    if (!permissions['trips']?.edit && !permissions['dashboard']?.edit) {
       throw new Error('Unauthorized. You do not have permission to edit trips.');
     }
   }

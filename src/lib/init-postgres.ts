@@ -209,4 +209,8 @@ export async function initPostgresSchema() {
   }
 
   console.log('Postgres schema initialized.');
+
+  // Seed Data
+  const { seedData } = await import('./seed-data');
+  await seedData(pool);
 }

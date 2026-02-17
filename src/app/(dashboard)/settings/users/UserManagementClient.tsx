@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createUser, deleteUser, updateUser } from './actions';
 import { useRouter } from 'next/navigation';
 import { Region, Location, User } from '@/lib/db';
@@ -23,6 +23,12 @@ export default function UserManagementClient({
     currentUserPermissions: any
 }) {
   const [users, setUsers] = useState<UserDisplay[]>(initialUsers);
+
+  // Sync state with props when router updates (e.g. after revalidatePath)
+  useEffect(() => {
+    setUsers(initialUsers);
+  }, [initialUsers]);
+
   const [isAdding, setIsAdding] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
