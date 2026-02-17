@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: tms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: jiwania
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin@123}
+      POSTGRES_DB: tms
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  tms-app:
+    build: .
+    image: tms:latest
+    container_name: tms-nextjs
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    volumes:
+      # Map the uploads directory to ensure uploaded images persist
+      - ./data/uploads:/app/public/uploads
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=jiwania
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-admin@123}
+      - POSTGRES_DB=tms
+
+volumes:
+  postgres_data:
