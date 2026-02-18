@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { deleteTrip } from '@/app/actions';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
 import DashboardTripModal from '@/components/DashboardTripModal';
 import RefreshControl from '@/components/RefreshControl';
 
@@ -38,6 +38,7 @@ export default function TripsListClient({
 }) {
   const [selectedTrip, setSelectedTrip] = useState<any | null>(null);
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const [isCreating, setIsCreating] = useState(false);
   const [localTrips, setLocalTrips] = useState(trips);
@@ -107,7 +108,9 @@ export default function TripsListClient({
         alert(res.error);
       } else {
         setLocalTrips(prev => prev.filter(t => t.id !== id));
-        router.refresh(); /* Just to be safe */
+        startTransition(() => {
+          router.refresh();
+        });
       }
     }
   };
@@ -139,6 +142,11 @@ export default function TripsListClient({
       <div style={{ marginBottom: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
         <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px', flex: 1, minWidth: '300px' }}>
           <div style={{ position: 'relative', flex: 1 }}>
+            {isPending && (
+              <div style={{ position: 'absolute', right: '10px', top: '10px' }}>
+                <span className="spinner-small" style={{ animation: 'spin 1s linear infinite', display: 'inline-block' }}>↻</span>
+              </div>
+            )}
             <span style={{ position: 'absolute', left: '12px', top: '10px', color: '#94a3b8' }}>🔍</span>
             <input
               type="text"
@@ -152,7 +160,34 @@ export default function TripsListClient({
         </form>
       </div>
 
-      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+
+
+      <div style={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', overflow: 'hidden', position: 'relative' }}>
+        {isPending && (
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+            zIndex: 10,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backdropFilter: 'blur(2px)'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '24px', height: '24px', border: '3px solid #3b82f6', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+              <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: 500 }}>Refreshing...</span>
+            </div>
+            <style jsx>{`
+              @keyframes spin {
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
+        )}
         <div style={{ overflowX: 'auto' }}>
           <div className="trips-table-container">
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -273,7 +308,13 @@ export default function TripsListClient({
           <DashboardTripModal
             isOpen={!!selectedTrip || isCreating}
             trip={selectedTrip}
-            onClose={() => { setSelectedTrip(null); setIsCreating(false); router.refresh(); }}
+            onClose={() => {
+              setSelectedTrip(null);
+              setIsCreating(false);
+              startTransition(() => {
+                router.refresh();
+              });
+            }}
             vehicles={vehicles}
             volunteers={volunteers}
             subStatuses={subStatuses}

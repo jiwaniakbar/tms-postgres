@@ -19,7 +19,7 @@ export default async function DashboardPage(props: {
     selectedStatuses = rawStatus.split(',').filter(Boolean);
   }
 
-  const historyDays = searchParams.historyDays ? parseInt(searchParams.historyDays) : 7;
+  const historyDays = searchParams.historyDays ? parseInt(searchParams.historyDays) : 30;
   const session = await getSession();
   
   if (!session) redirect('/login');

@@ -21,7 +21,7 @@ export default function DashboardNavClient({ role, permissions }: { role?: strin
       )}
 
       {canView('users') && (
-        <Link href="/" className={`sidebar-link ${pathname === '/' ? 'active' : ''}`}>
+        <Link href="/bus-incharges" className={`sidebar-link ${pathname === '/bus-incharges' ? 'active' : ''}`}>
           <span className="icon">👥</span> Bus Incharges
         </Link>
       )}

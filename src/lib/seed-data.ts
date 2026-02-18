@@ -64,13 +64,12 @@ export async function seedData(pool: Pool) {
 
   // 3. TRIP STATUSES (Progress)
   const statuses = [
-    { name: 'Planned', passenger_required: 0, sort_order: 10 },
-    { name: 'Scheduled', passenger_required: 0, sort_order: 20 },
-    { name: 'Arriving', passenger_required: 0, sort_order: 30 },
-    { name: 'Active', passenger_required: 1, sort_order: 40 },
-    { name: 'Completed', passenger_required: 0, sort_order: 50 },
-    { name: 'Cancelled', passenger_required: 0, sort_order: 60 },
-    { name: 'Breakdown', passenger_required: 0, sort_order: 70 }
+    { name: 'Scheduled', passenger_required: 0, sort_order: 10 },
+    { name: 'Arriving', passenger_required: 0, sort_order: 20 },
+    { name: 'Active', passenger_required: 1, sort_order: 30 },
+    { name: 'Completed', passenger_required: 0, sort_order: 40 },
+    { name: 'Cancelled', passenger_required: 0, sort_order: 50 },
+    { name: 'Breakdown', passenger_required: 0, sort_order: 60 }
   ];
 
   for (const s of statuses) {
@@ -82,15 +81,15 @@ export async function seedData(pool: Pool) {
 
   // 4. SUB-STATUSES
   const subStatuses = [
-    { name: 'Driver Assigned', linked: 'Scheduled', sort: 10 },
-    { name: 'Vehicle Assigned', linked: 'Scheduled', sort: 20 },
-    { name: 'En Route to Pickup', linked: 'Arriving', sort: 10 },
-    { name: 'At Pickup Location', linked: 'Arriving', sort: 20 },
+    { name: 'Planned', linked: 'Scheduled', sort: 10 },
+    { name: 'Ready for Onboarding', linked: 'Scheduled', sort: 20 },
+    { name: 'Perimeter - 1 km', linked: 'Arriving', sort: 10 },
+    { name: 'Perimeter - 2 km', linked: 'Arriving', sort: 20 },
     { name: 'Boarding', linked: 'Active', sort: 10 },
     { name: 'In Transit', linked: 'Active', sort: 20 },
-    { name: 'At Dropoff', linked: 'Active', sort: 30 },
-    { name: 'Deboarding', linked: 'Active', sort: 40 },
-    { name: 'Finished', linked: 'Completed', sort: 10 }
+    { name: 'At pit stop', linked: 'Active', sort: 30 },
+    { name: 'Arrived', linked: 'Completed', sort: 10 },
+    { name: 'Parked', linked: 'Completed', sort: 20 }
   ];
 
   for (const ss of subStatuses) {

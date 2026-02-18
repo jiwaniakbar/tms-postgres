@@ -29,8 +29,8 @@ export default function MainNavClient({ role, permissions }: { role: string, per
 
       {canView('users') && (
         <Link 
-          href="/" 
-          className={`btn nav-btn ${pathname === '/' ? 'active' : ''}`}
+          href="/bus-incharges"
+          className={`btn nav-btn ${pathname === '/bus-incharges' ? 'active' : ''}`}
         >Bus Incharges</Link>
       )}
 

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import DashboardTripRow from './DashboardTripRow';
 import DashboardTripModal from '@/components/DashboardTripModal';
 
@@ -31,12 +32,18 @@ export default function DashboardClient({
   const [filterOrigin, setFilterOrigin] = useState('All Origins');
   const [filterDest, setFilterDest] = useState('All Destinations');
 
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
   const handleRowClick = (trip: any) => {
     setSelectedTrip(trip);
   };
 
   const handleCloseModal = () => {
     setSelectedTrip(null);
+    startTransition(() => {
+      router.refresh();
+    });
   };
 
   return (
@@ -144,6 +151,32 @@ export default function DashboardClient({
           />
         ))}
       </section>
+
+        {isPending && (
+          <div style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            color: 'white',
+            padding: '16px 24px',
+            borderRadius: '8px',
+            zIndex: 2000,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            backdropFilter: 'blur(4px)'
+          }}>
+            <div style={{ width: '20px', height: '20px', border: '2px solid white', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+            <span>Refreshing Data...</span>
+            <style jsx>{`
+            @keyframes spin {
+              to { transform: rotate(360deg); }
+            }
+          `}</style>
+          </div>
+        )}
     </div>
 
       {selectedTrip && (

@@ -501,7 +501,8 @@ export async function getTrips(search?: string, region_id?: number | null, limit
     } else {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - days);
-      conditions.push(`(trips.status IN ('Active', 'Arriving', 'Scheduled', 'Breakdown') OR (trips.status IN ('Completed', 'Cancelled', 'Planned') AND trips.start_time > $${pIdx++}))`);
+      // Strict filtering: ALL statuses must respect the date window
+      conditions.push(`trips.start_time > $${pIdx++}`);
       params.push(cutoffDate.toISOString());
     }
   }
@@ -593,7 +594,8 @@ export async function getTripsCount(search?: string, region_id?: number | null, 
     } else {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - days);
-      conditions.push(`(trips.status IN ('Active', 'Arriving', 'Scheduled', 'Breakdown') OR (trips.status IN ('Completed', 'Cancelled', 'Planned') AND trips.start_time > $${pIdx++}))`);
+      // Strict filtering
+      conditions.push(`trips.start_time > $${pIdx++}`);
       params.push(cutoffDate.toISOString());
     }
   }
